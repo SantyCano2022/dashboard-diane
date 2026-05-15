@@ -1,0 +1,55 @@
+{
+  "name": "Dashboard Tributario DIAN",
+  "short_name": "DIAN Tax",
+  "description": "App para contadores y PYMEs colombianas. Automatiza el cálculo de IVA, Retefuente, ReteICA, ReteIVA y genera Formularios DIAN 300 y 350. Desarrollado por CANO SAS DEV.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1220",
+  "theme_color": "#2563eb",
+  "lang": "es-CO",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/",
+      "description": "Ver métricas tributarias"
+    },
+    {
+      "name": "Subir Excel",
+      "url": "/invoices",
+      "description": "Cargar facturas desde Excel"
+    },
+    {
+      "name": "Generar PDF",
+      "url": "/reports",
+      "description": "Crear Formularios DIAN"
+    },
+    {
+      "name": "Calendario",
+      "url": "/calendar",
+      "description": "Ver vencimientos"
+    }
+  ]
+}
