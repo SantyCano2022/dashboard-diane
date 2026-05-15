@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm run *)",
-      "Bash(grep -qE \"Local:|ready in|error\" \"C:\\\\\\\\Users\\\\\\\\User\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-User-OneDrive-Desktop-Automatizaciones-DashBoard-Diane\\\\\\\\45e759a0-1337-4a90-aded-388fb23eba2e\\\\\\\\tasks\\\\\\\\bmv9t525q.output\")",
-      "Bash(cat \"C:\\\\\\\\Users\\\\\\\\User\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-User-OneDrive-Desktop-Automatizaciones-DashBoard-Diane\\\\\\\\45e759a0-1337-4a90-aded-388fb23eba2e\\\\\\\\tasks\\\\\\\\bmv9t525q.output\")"
-    ]
-  }
-}
