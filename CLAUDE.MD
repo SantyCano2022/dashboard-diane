@@ -1,126 +1,22 @@
-# Dashboard Integral Tributario DIAN 🇨🇴
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
 
 ## Qué es este proyecto
+
 App web para contadores y PYMEs colombianas que automatiza reportes tributarios:
-- Sube un Excel con facturas del período
-- Calcula automáticamente IVA, Retefuente, Reteica, ReteIVA
-- Genera formularios PDF listos para presentar a la DIAN (300, 350)
-- Dashboard visual con gráficas por período y comparativos
+- Sube Excel con facturas → calcula IVA, Retefuente, ReteICA, ReteIVA automático
+- Genera PDFs Formularios DIAN 300 (IVA) y 350 (Retenciones)
+- Dashboard con gráficas Recharts por período
 - Multi-empresa: un contador maneja varios clientes
-- Calendario tributario con alertas de vencimientos DIAN 2025
+- Calendario tributario DIAN 2025 con alertas de vencimientos
+
+**Mercado objetivo:** contadores independientes + PYMEs colombianas.
+**Diferenciador vs. Siigo/Alegra:** ellos hacen facturación electrónica; este app automatiza reportes tributarios.
 
 ---
-
-## Stack tecnológico
-- **Frontend:** React + Tailwind CSS
-- **Base de datos:** Supabase (PostgreSQL + Auth + Storage)
-- **Deploy frontend:** Vercel (gratuito)
-- **Deploy DB:** Supabase free tier (permanente, nunca hiberna)
-- **Generación PDF:** reportlab o fpdf2 (Python) o jsPDF (JS)
-- **Parseo Excel:** pandas + openpyxl / SheetJS
-- **Datos demo:** Faker con locale='es_CO'
-
----
-
-## Arquitectura
-- Modelo **multi-tenant**: TODAS las tablas de negocio llevan `company_id` para aislar datos entre empresas
-- Auth: Supabase Auth con email/password
-- Storage: Supabase Storage para Excel subidos y PDFs generados
-- Edge Functions: motor de cálculo tributario
-
----
-
-## Base de datos (Supabase PostgreSQL)
-Tablas principales, todas con `company_id`:
-- `users` — contadores autenticados
-- `companies` — empresas del contador (multi-tenant)
-- `invoices` — facturas del período con company_id
-- `tax_reports` — reportes generados por período
-- `tax_calendar` — fechas y vencimientos DIAN 2025
-
----
-
-## Compliance y datos de prueba
-- **NIT demo:** 999.999.999-0 (supera rango válido colombiano, imposible que coincida con contribuyente real)
-- **PDF:** watermark visible "DOCUMENTO DE PRUEBA – NO VÁLIDO ANTE LA DIAN"
-- **Nota al pie PDF:** "Consulte a un contador certificado..."
-- **Bloque WARNING** en PDF que explica que ningún dato es real
-- **UI:** Banner visible "Modo Demo – Datos ficticios generados para pruebas"
-- **Empresa demo:** "Demo Tech SAS" (nunca empresas reales)
-- **Datos demo:** generados con Faker(locale='es_CO') — nombres, ciudades y empresas colombianas reales
-
----
-
-## Los 5 entregables concretos (con criterio verificable)
-
-| # | Entregable | Criterio de éxito |
-|---|---|---|
-| 1 | URL pública | Login funcional con demo@dian.co / demo1234 |
-| 2 | GitHub README | Badges + screenshots + instrucciones en 3 comandos |
-| 3 | PDF tributario | NIT ficticio, IVA calculado, watermark, diseño profesional |
-| 4 | Datos demo | 50 facturas, 6 meses de historia, gráficas nunca vacías |
-| 5 | Video LinkedIn | Script de 3 min, flujo completo grabado |
-
----
-
-## Plan por fases (6 días)
-
-### Fase 1 — Backend Core
-- Configurar Supabase: tablas, RLS, Auth
-- Motor tributario: cálculo IVA, Retefuente, Reteica, ReteIVA
-- Parseo de Excel con facturas
-- API endpoints base
-
-### Fase 2 — Generación de PDF
-- Formularios 300 y 350 pre-diligenciados
-- Watermark y disclaimers legales
-- Diseño profesional con NIT ficticio
-
-### Fase 3 — Frontend Dashboard
-- Login / Auth con Supabase
-- Subida de Excel
-- Dashboard con gráficas (Chart.js o Recharts)
-- Vista multi-empresa
-
-### Fase 4 — Calendario tributario + Alertas
-- Fechas DIAN 2025 hardcodeadas
-- Sistema de alertas por vencimiento
-- Notificaciones según NIT y tipo de empresa
-
-### Fase 5 — Datos demo + Deploy
-- Seed de 50 facturas con Faker(locale='es_CO')
-- Deploy en Vercel + Supabase
-- URL pública con credenciales demo
-
-### Fase 6 — Pulido final
-- README con badges y screenshots
-- Video LinkedIn 3 minutos
-- Revisión compliance DIAN
-
----
-
-## Contexto de negocio
-- **Mercado objetivo:** contadores independientes y PYMEs en Colombia
-- **Competidores:** Siigo, Alegra (facturación electrónica — nosotros NO competimos ahí)
-- **Diferenciador:** automatización de reportes tributarios para independientes, accesible y gratuito para MVP
-- **Monetización futura:** freemium por número de empresas o facturas procesadas
-
----
-
-## Fase actual
-> Actualiza esta línea cada vez que termines una fase:
-**FASE ACTUAL: Fase 1 — Backend Core**
-
----
-
-## Cómo continuar en nueva sesión
-Lee este archivo y di: "Entendido, continuamos en [Fase X]"
-
----
-
-# Guía técnica para Claude Code
-
-> Esta sección describe el estado **actual** del código (no el plan). Lee antes de editar.
 
 ## Comandos
 
@@ -131,55 +27,112 @@ npm run build        # tsc + vite build → dist/
 npm run preview      # servir dist/ localmente
 ```
 
-No hay tests, lint, ni pipeline CI configurado. `npm run build` corre `tsc --noEmit` (ver [tsconfig.json](tsconfig.json)) — útil como verificación de tipos antes de commit.
+No hay tests, lint, ni pipeline CI. `npm run build` corre `tsc` — útil como verificación de tipos antes de commit.
 
-## Stack real vs. plan
+---
 
-El plan en este archivo describe Supabase + Edge Functions. **El código actual no tiene backend**: es una SPA client-only que persiste todo en `localStorage`. Cuando trabajes:
-- No asumas que existen tablas, RLS, Auth de Supabase, ni Edge Functions.
-- El "login" es comparación hardcoded (`demo@dian.co` / `demo1234`) en [src/contexts/AppContext.jsx:46-58](src/contexts/AppContext.jsx#L46-L58).
-- Toda la persistencia pasa por `localStorage` con clave `dian_dashboard_data`.
-- Faker, parseo Excel y generación PDF corren en el browser.
+## Stack real (lo que corre hoy)
 
-Stack en uso: React 19 + Vite 8 + Tailwind 4 (plugin Vite, no archivo de config) + react-router-dom v7 + jsPDF + xlsx + recharts + framer-motion + lucide-react + @faker-js/faker (locale `es`).
+**No hay backend.** SPA client-only con persistencia en `localStorage`.
 
-TypeScript está configurado pero el código fuente es `.jsx`. Quedan dos archivos legacy `.ts` (`counter.ts`, `main.ts`) sin uso — ignorar al editar.
+- React 19 + Vite 8 + Tailwind 4 (plugin Vite, sin archivo de config separado)
+- react-router-dom v7 + framer-motion + lucide-react
+- recharts (gráficas) + jsPDF + jspdf-autotable (PDFs) + xlsx (parseo Excel)
+- @faker-js/faker locale `es` (seed de datos demo) + date-fns
 
-## Arquitectura actual
+TypeScript configurado pero el código fuente es `.jsx`. Dos archivos legacy `.ts` (`counter.ts`, `main.ts`) sin uso — ignorar.
+
+---
+
+## Arquitectura
 
 ```
 src/
 ├── main.jsx                 entry — monta <App/>
 ├── App.jsx                  router + ProtectedRoute/PublicRoute
-├── contexts/AppContext.jsx  estado global (auth, companies, invoices, calendar) + persistencia localStorage
+├── contexts/AppContext.jsx  estado global + persistencia localStorage
 ├── components/layout/Sidebar.jsx
 ├── pages/                   Login, Dashboard, Invoices, Reports, Calendar, Companies
 └── lib/
     ├── taxEngine.js         IVA / Retefuente / ReteICA / ReteIVA + UVT 2025
-    ├── excelParser.js       carga .xlsx → mapea columnas ES → invoices con impuestos calculados
-    ├── pdfGenerator.js      Formularios DIAN 300 (IVA) y 350 (Retenciones) con watermark
-    └── seedData.js          generador 50 facturas demo + empresa "Demo Tech SAS" + calendario DIAN 2025 hardcoded
+    ├── excelParser.js       .xlsx → invoices con impuestos calculados
+    ├── pdfGenerator.js      Formularios 300 y 350 con watermark obligatorio
+    └── seedData.js          50 facturas demo + empresa "Demo Tech SAS" + calendario DIAN 2025
 ```
 
-Flujo de datos: **toda factura pasa por `calculateInvoiceTaxes()` antes de guardarse** — tanto las generadas por seed como las parseadas de Excel. El objeto resultante mezcla campos de entrada (`base_amount`, `iva_rate`, `activity`, `city`, `sector`) con los calculados (`iva_amount`, `retefuente_amount`, `reteica_amount`, `reteiva_amount`, `total`). Si añades un nuevo origen de facturas, mantén esa convención.
+### Rutas
 
-## Reglas tributarias clave (no inventar)
+| Path | Componente |
+|------|-----------|
+| `/login` | LoginPage (pública) |
+| `/` | DashboardPage |
+| `/invoices` | InvoicesPage |
+| `/reports` | ReportsPage |
+| `/calendar` | CalendarPage |
+| `/companies` | CompaniesPage |
 
-- `UVT_2025 = 49799` COP. Umbrales de retefuente se expresan en UVT y se multiplican aquí ([src/lib/taxEngine.js:8](src/lib/taxEngine.js#L8)).
-- Tarifas IVA: 19% / 5% / 0%.
-- Retefuente por actividad: tabla en `RETEFUENTE_ACTIVITIES`. Si la base < `baseUVT * UVT_2025`, retención = 0.
-- ReteICA por ciudad+sector: solo Bogotá / Medellín / Cali están definidas. Default `bogota`.
+Rutas protegidas requieren `isAuthenticated`. Todo `/*` redirige a `/`.
+
+### AppContext — API expuesta
+
+```js
+{ user, isAuthenticated, login, logout,
+  companies, activeCompany, setActiveCompany, addCompany, deleteCompany,
+  invoices,         // YA FILTRADAS por activeCompany.id
+  allInvoices,      // sin filtrar — usar solo para conteos cross-empresa
+  addInvoices, deleteInvoice, deleteInvoices,
+  calendar,
+  sidebarOpen, setSidebarOpen }
+```
+
+- `login(email, password)` — solo acepta `demo@dian.co` / `demo1234`. Al loguearse genera 50 facturas con Faker y la empresa demo.
+- `logout()` — limpia `localStorage` y resetea companies/invoices/activeCompany.
+- `addInvoices(arr)` — estampa `company_id: activeCompany.id` en cada factura y hace prepend.
+- `deleteInvoice(id)` / `deleteInvoices([ids])` — eliminan facturas.
+- `addCompany(obj, { withDemoData })` — asigna `id: company-${Date.now()}`. Si `withDemoData: true`, genera 20 facturas demo para esa empresa.
+- `deleteCompany(id)` — elimina empresa + sus facturas en cascada. Si era la activa, cambia a otra.
+- **`invoices` siempre filtradas por empresa activa** — las páginas no deben filtrar manualmente.
+- Persistencia: clave `dian_dashboard_data` en localStorage.
+
+### Flujo de datos de facturas
+
+**Toda factura pasa por `calculateInvoiceTaxes()` antes de guardarse** — seed, Excel parseado, manual. El objeto mezcla campos de entrada (`company_id`, `base_amount`, `iva_rate`, `activity`, `city`, `sector`, `gran_contribuyente`) con calculados (`iva_amount`, `retefuente_amount`, `reteica_amount`, `reteiva_amount`, `total`). Mantén esta convención si añades origen nuevo.
+
+**Multi-tenant**: cada factura tiene `company_id`. El context filtra automáticamente por `activeCompany.id` y expone `invoices` ya filtradas. No filtres manualmente en páginas.
+
+---
+
+## Reglas tributarias (no inventar, no cambiar sin instrucción)
+
+- `UVT_2025 = 49799` COP — en [src/lib/taxEngine.js:8](src/lib/taxEngine.js#L8).
+- Tarifas IVA: 19% general / 5% reducida / 0% exento.
+- Retefuente por actividad: tabla `RETEFUENTE_ACTIVITIES`. Si `base < baseUVT * UVT_2025`, retención = 0.
+- ReteICA por ciudad+sector: solo `bogota` / `medellin` / `cali` definidas. Default `bogota`.
 - ReteIVA = 15% del IVA, **solo** si `gran_contribuyente: true`.
-- NIT demo `999.999.999-0` (inválido a propósito) — nunca uses NITs reales.
 
-## Cumplimiento en PDFs
+---
 
-`pdfGenerator.js` aplica obligatoriamente:
-1. Watermark diagonal "DOCUMENTO DE PRUEBA – NO VÁLIDO ANTE LA DIAN".
-2. Bloque amarillo de advertencia al pie con disclaimer.
-3. NIT hardcoded a `999.999.999-0` (ignora el de la empresa).
+## Compliance en PDFs (obligatorio, no debilitar)
 
-No remuevas ni debilites estos elementos sin instrucción explícita — son requisito de compliance.
+`pdfGenerator.js` aplica siempre:
+1. Watermark diagonal "DOCUMENTO DE PRUEBA – NO VÁLIDO ANTE LA DIAN"
+2. Bloque amarillo de advertencia al pie con disclaimer legal
+3. NIT hardcoded `999.999.999-0` (ignora el NIT real de la empresa)
+
+No remuevas ni debilites estos elementos sin instrucción explícita.
+
+---
+
+## Convenciones al editar
+
+- Estilos inline + clases Tailwind mezclados — sigue el estilo del archivo que tocas.
+- Strings de UI en español (es-CO).
+- Formato de moneda vía `formatCOP()` en `taxEngine.js`.
+- Fechas como ISO `YYYY-MM-DD`.
+- IDs: `${prefix}-${index}-${Date.now()}`.
+- NIT demo: `999.999.999-0` (inválido a propósito — nunca uses NITs reales).
+
+---
 
 ## Credenciales demo
 
@@ -188,11 +141,26 @@ email:    demo@dian.co
 password: demo1234
 ```
 
-Login con cualquier otro valor falla. Al loguearse, AppContext genera 50 facturas con Faker y la empresa demo. `logout()` limpia `localStorage`.
+---
 
-## Convenciones al editar
+## Fase actual
 
-- Componentes y páginas usan estilos inline + clases Tailwind mezclados — sigue el estilo del archivo que tocas.
-- Strings de UI en español (es-CO). Formato de moneda vía `formatCOP()` en `taxEngine.js`.
-- Fechas como ISO `YYYY-MM-DD`.
-- IDs generados con `${prefix}-${index}-${Date.now()}`.
+> Actualiza esta línea cada vez que termines una fase:
+
+**FASE ACTUAL: Fase 5 — Deploy + Pulido final**
+
+### Estado de fases
+
+| Fase | Descripción | Estado |
+|------|-------------|--------|
+| 1 | Motor tributario (IVA / Retefuente / ReteICA / ReteIVA) | ✅ |
+| 2 | Generación PDF Formularios 300 y 350 | ✅ |
+| 3 | Frontend Dashboard + filtros período + alertas vencimiento | ✅ |
+| 4 | Calendario DIAN 2025 + filtros NIT/obligación/urgencia | ✅ |
+| 4.5 | Multi-tenant real (filtro por empresa) + responsive mobile | ✅ |
+| 5 | Deploy en Vercel + URL pública | ⏳ |
+| 6 | Video LinkedIn 3 min + revisión compliance final | ⏳ |
+
+## Cómo continuar en nueva sesión
+
+Lee este archivo y di: "Entendido, continuamos en [Fase X]"
